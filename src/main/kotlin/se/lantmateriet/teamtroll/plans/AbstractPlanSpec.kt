@@ -142,34 +142,26 @@ abstract class AbstractPlanSpec {
                 "versions:set -DnewVersion=\${bamboo.buildNumber}-\${bamboo.planRepository.branchName}")
     }
 
-    protected fun jaCoCoTask(springpProfile: String = ""): Task<*, *> {
+    protected fun jaCoCoTask(springpProfile: String = "default"): Task<*, *> {
         var goal = "clean org.jacoco:jacoco-maven-plugin:prepare-agent install" +
                 " -Dmaven.test.failure.ignore=true" +
                 " -Dsonar.jacoco.reportMissing.force.zero=true" +
-                " -Dapplication.version=\${bamboo.buildNumber}"
-        if (isNullOrEmpty(springpProfile)) {
-            goal = "$goal -Dspring.profiles.default=$springpProfile"
-        }
+                " -Dapplication.version=\${bamboo.buildNumber}" +
+                " -Dspring.profiles.default=$springpProfile"
         val task = mavenTask("JaCoCo", goal)
         task.hasTests(true)
         return task
     }
 
-    protected fun sonarQubeTask(springProfile: String = ""): Task<*, *> {
-        var goal = "sonar:sonar -Psonarqube"
-        if (isNullOrEmpty(springProfile)) {
-            goal = "$goal -Dspring.profiles.default=$springProfile"
-        }
+    protected fun sonarQubeTask(springProfile: String = "default"): Task<*, *> {
+        var goal = "sonar:sonar -Psonarqube -Dspring.profiles.default=$springProfile"
         val task = mavenTask("SonarQube", goal)
         task.hasTests(true)
         return task
     }
 
-    protected fun deployToArtifactoryTask(springProfile: String = ""): Task<*, *> {
-        var goal = "deploy -Dapplication.version=\${bamboo.buildNumber}-\${bamboo.planRepository.branchName}"
-        if (isNullOrEmpty(springProfile)) {
-            goal = "$goal -Dspring.profiles.default=$springProfile"
-        }
+    protected fun deployToArtifactoryTask(springProfile: String = "default"): Task<*, *> {
+        var goal = "deploy -Dapplication.version=\${bamboo.buildNumber}-\${bamboo.planRepository.branchName} -Dspring.profiles.default=$springProfile"
         return mavenTask("Deploy to artifactory", goal)
     }
 
