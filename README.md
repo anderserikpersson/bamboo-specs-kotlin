@@ -1,2 +1,3 @@
 # bamboo-specs-kotlin
-Simple example. Removed sensitive information.
+Simple example.
+Removed sensitive information.
